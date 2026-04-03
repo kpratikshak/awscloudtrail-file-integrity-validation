@@ -9,8 +9,6 @@ Using this setup, security teams can cryptographically verify whether CloudTrail
 have been modified, deleted, or altered.
 
 🧠 Usage:
-
-
 Tamper-proof audit logs
 Compliance (SOC 2, ISO 27001, PCI-DSS)
 Ability to validate log integrity for forensic analysis
@@ -18,14 +16,14 @@ Ability to validate log integrity for forensic analysis
 
 User Activity → CloudTrail → S3 Bucket → Digest Files → Validation via CLI
 
-⚙️ Prerequisites
-AWS Account
+⚙️ Prerequisites:
 AWS CLI installed & configured
 IAM permissions:
 cloudtrail
 cloudtrail
 cloudtrail
 s3
+
 🚀 Step 1: Create S3 Bucket
 
 ~ aws s3api create-bucket \
@@ -49,8 +47,8 @@ Use the following command to validate logs:
   --start-time 2024-01-01T00:00:00Z \
   --end-time 2024-01-02T00:00:00Z
   
-📂 What Happens Behind the Scenes?
- CloudTrail delivers logs to S3
+📂 Processes:
+CloudTrail delivers logs to S3
 Generates digest files
 Each digest file contains:
 Hashes of log files
@@ -59,12 +57,15 @@ Uses SHA-256 hashing + digital signatures
 ✅ Expected Output
 Validation successful → Logs are intact
 Validation failed → Logs were tampered or missing
-🔐 Security Best Practices
+
+🔐 Security Best Practices:
 Enable S3 versioning
 Use SSE-KMS encryption
 Restrict bucket access using IAM policies
 Enable CloudTrail in all regions
-📜 Example Script: Enable CloudTrail
+
+📜 Bash Script to Enable CloudTrail
+
 #!/bin/bash
 
 TRAIL_NAME="my-secure-trail"
@@ -76,7 +77,8 @@ aws cloudtrail create-trail \
   --enable-log-file-validation
 
 aws cloudtrail start-logging --name $TRAIL_NAME
-📜 Example Script: Validate Logs
+
+📜 Bash Script to Validate Logs:
 #!/bin/bash
 
 TRAIL_ARN=$1
@@ -85,14 +87,14 @@ aws cloudtrail validate-logs \
   --trail-arn $TRAIL_ARN \
   --start-time $(date -u -d '1 day ago' +%Y-%m-%dT%H:%M:%SZ) \
   --end-time $(date -u +%Y-%m-%dT%H:%M:%SZ)
-🧪 Testing Scenario
 
-Enable CloudTrail
+🧪 Testing Scenario
+Enable CloudTrail:
 Perform AWS actions (e.g., create EC2 instance)
 Wait for logs to be delivered
 Run validation command
 Confirm integrity status
-❌ Common Mistakes
+❌ Common Mistakes:
 Forgetting --enable-log-file-validation
 Incorrect trail ARN during validation
 Not waiting for digest files to be generated
